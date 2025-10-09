@@ -101,6 +101,14 @@ async function fetchNews(url, category, res) {
 
 // Routes
 
+app.get("/health", (req,res) =>{
+    res.json({
+                status: 200,
+                success: true,
+                message:"Instance running: "+getInstanceIp()
+            });
+})
+
 // All news
 app.get("/all-news", (req, res) => {
     let page = parseInt(req.query.page) || 1;
