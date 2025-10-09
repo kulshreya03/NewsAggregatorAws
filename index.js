@@ -4,6 +4,8 @@ const axios = require('axios');
 const cors = require('cors');
 const AWS = require('aws-sdk');
 
+const os = require('os');
+
 const app = express();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -45,6 +47,23 @@ async function saveArticle(article) {
     }
 }
 
+//Function for Fetching Instance Ip
+function getInstanceIp() 
+{
+    const networkInterfaces = os.networkInterfaces();
+    for (const interfaceName in networkInterfaces) {
+       const addresses = networkInterfaces[interfaceName];
+       for (const addressInfo of addresses) 
+        {
+           if (addressInfo.family === 'IPv4' && !addressInfo.internal) {
+               console.log(`Interface: ${interfaceName}, IP Address: ${addressInfo.address}`);
+               // You can store or use this IP address as needed
+                return addressInfo.address;
+           }
+       }
+   }
+}
+
 // Function to fetch news from API and save to DB
 async function fetchNews(url, category, res) {
     try {
@@ -59,6 +78,7 @@ async function fetchNews(url, category, res) {
             res.json({
                 status: 200,
                 success: true,
+                instanceIp: getInstanceIp(),
                 message: "Successfully fetched and saved data",
                 data: articles
             });
